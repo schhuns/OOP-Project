@@ -1,0 +1,56 @@
+package seleniumtest;
+
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
+
+public class selenium {
+    public static void main(String[] args) {
+        // Set the path to your WebDriver executable
+        System.setProperty("webdriver.chrome.driver", "/Users/macbookpro/Documents/chromedriver-mac-arm64 2/chromedriver");
+
+        // Set up ChromeDriver with options
+        ChromeOptions options = new ChromeOptions();
+        WebDriver driver = new ChromeDriver(options);
+
+        try {
+            // Open the URL
+            driver.get("https://x.com/elonmusk");
+
+            // Wait for the page to load (static wait)
+            Thread.sleep(5000);
+
+            // Scroll down 5 times
+            for (int i = 0; i < 5; i++) {
+                ((ChromeDriver) driver).executeScript("window.scrollBy(0, 100)");
+                Thread.sleep(500);
+            }
+
+            // Locate tweets using XPath
+            List<WebElement> tweets = driver.findElements(By.xpath(
+                    "//*[@id='react-root']/div/div/div[2]/main/div/div/div/div/div/div[3]/div/div/section/div/div/div/div/div/article/div/div/div[2]/div[2]/div[2]"
+            ));
+
+            // Write tweets to a file
+            FileWriter writer = new FileWriter("tweets.txt");
+            for (WebElement tweet : tweets) {
+                writer.write("---------------------------\n" + tweet.getText() + "\n");
+            }
+            writer.close();
+
+            System.out.println("Tweets saved to tweets.txt");
+
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            // Close the browser
+            driver.quit();
+        }
+    }
+}
